@@ -1,37 +1,87 @@
-def process_sales_data(sales_data):
-    guest_orders = {}
-    dishes_set = set()
+import time
+from time import sleep
 
-    for guest, dish, quantity in sales_data:
-        dishes_set.add(dish)
 
-        if guest not in guest_orders:
-            guest_orders[guest] = {}
+def timer_decorator(func):
+    def wrapper(*args, **kwargs):
+        start_time = time.perf_counter()
+        result = func(*args, **kwargs)
+        end_time = time.perf_counter()
+        execution_time = end_time - start_time
+        print(f"Функция {func.__name__} выполнилась за {execution_time:.4f} секунд(с).")
+        return result
+    return wrapper
 
-        if dish in guest_orders[guest]:
-            guest_orders[guest][dish] += quantity
-        else:
-            guest_orders[guest][dish] = quantity
+class Client:
+    Cod: float
+    Name: str
+    Date: float
+    Size: float
+    Percent: float
 
-    sorted_guests = sorted(guest_orders.keys())
+    def __init__(self, c, n, d, s, p):
+        self.Cod = c
+        self.Name = n
+        self.Date = d
+        self.Size = s
+        self.Percent = p
 
-    for guest in sorted_guests:
-        print(f"{guest}:")
+    def __str__(self):
+        return f"Клиент {self.Name}, код: {self.Cod}, дата: {self.Date}, вклад: {self.Size}, процент: {self.Percent}"
 
-        guest_dishes_set = set(guest_orders[guest].keys())
 
-        for dish in sorted(guest_dishes_set):
-            print(f" {dish}: {guest_orders[guest][dish]}")
+class Bank(Client):
+    def __init__(self):
+        self.client_base = []
 
-        print()
+    def add_client(self, Client):
+        self.client_base.append(Client)
 
-sales_data = [
-    ("Alice", "Burger", 2),
-    ("Bob", "Salad", 1),
-    ("Eve", "Pizza", 3),
-    ("David", "Burger", 1),
-    ("Eve", "Salad", 2),
-    ("Eve", "Salad", 2),
-    ]
+    def show_by_money(self, money):
+        filtered_clients = [
+            str(client)
+            for client in self.client_base
+            if client.Size > money
+        ]
+        return "\n".join(filtered_clients)
 
-process_sales_data(sales_data)
+    def show_by_code(self, code):
+        for client in self.client_base:
+            if client.Cod == code:
+                return str(client)
+        return "Клиент с данным кодом не найден"
+    @timer_decorator
+    def show_by_proc(self, proc):
+        filtered_clients = [
+            str(client)
+            for client in self.client_base
+            if client.Percent > proc
+        ]
+        sleep(0.5)
+        return "\n".join(filtered_clients)
+
+    # Создание клиентов
+
+
+client1 = Client("C001", "Иван Иванов", "2023-01-01", 10000, 5)
+client2 = Client("C002", "Мария Петрова", "2023-02-15", 20000, 7)
+client3 = Client("C003", "Алексей Сидоров", "2023-03-20", 15000, 6)
+
+# Создание банка и добавление клиентов
+bank = Bank()
+bank.add_client(client1)
+bank.add_client(client2)
+bank.add_client(client3)
+
+
+# Использование декоратора для метода add_client
+def add_client(client):
+    bank.client_base.append(client)
+
+
+# Тестирование методов банка
+print(bank.show_by_money(10000))
+print()
+print(bank.show_by_code("C002"))
+print()
+print(bank.show_by_proc(5))
