@@ -1,5 +1,4 @@
 import sqlite3
-# import cgi
 con = sqlite3.connect('HH.db')
 cur = con.cursor()
 
