@@ -15,5 +15,25 @@
   {% else %}
     <p>No agency are available.</p>
   {% endif %}
+
+  {% if employee_list %}
+    <ul>
+    {% for employee in employee_list %}
+        <li><a href="/employee/{{ employee.id }}/">{{ employee.name }}</a></li>
+    {% endfor %}
+    </ul>
+  {% else %}
+    <p>No employees are available.</p>
+  {% endif %}
+
+  {% if contract_list %}
+    <ul>
+    {% for contract in contract_list %}
+        <li><a href="/contract/{{ contract.id }}/">{{ contract.id }}</a></li>
+    {% endfor %}
+    </ul>
+  {% else %}
+    <p>No contracts are available.</p>
+  {% endif %}
   </body>
 </html>
